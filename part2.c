@@ -189,10 +189,35 @@ void accessCSCAN(int *request, int numRequest)
 //access the disk location in LOOK
 void accessLOOK(int *request, int numRequest)
 {
-    //write your logic here
+    int *newRequest, newCnt=numRequest, i, j=0;
+    //decrease the count if one of the requests actually has a 0 or a 199 track, otherwise
+    //assume it will be one more to account for the 0 transition
+
+    newRequest = malloc(newCnt * sizeof(int));
+    
+    qsort(request,numRequest,sizeof(int),cmpfunc);
+
+    int indexOfStart;
+    for(i=0;i<numRequest-1;i++){
+        if(request[i] < START && request[i+1] > START){
+            indexOfStart = i;
+        }
+    }
+    
+    //go left to right for the larger elements
+    for(i=indexOfStart+1;i<numRequest;i++){
+        newRequest[j] = request[i];
+        j++;
+    }
+     //go right to left for the smaller elements
+    for(i=indexOfStart;i>=0;i--){
+        newRequest[j] = request[i];
+        j++;
+    }
+
     printf("\n----------------\n");
     printf("LOOK :");
-    printSeqNPerformance(request, numRequest);
+    printSeqNPerformance(newRequest, newCnt);
     printf("----------------\n");
     return;
 }
