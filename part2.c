@@ -72,7 +72,25 @@ void accessFCFS(int *request, int numRequest)
 //access the disk location in SSTF
 void accessSSTF(int *request, int numRequest)
 {
-    //write your logic here
+    //sort the request array and thus the sequence performance will go from smallest to largest
+    int *diff, newCnt, i, j;
+    diff = malloc(numRequest * sizeof(int));
+
+    for(i = 0;i<numRequest;i++){
+        diff[i]=abs(START - request[i]);
+    }
+
+    for(i = 0; i< numRequest; i++){
+        
+        for(j = i+1; j<numRequest; j++){
+            if(diff[i] > diff[j]){
+                swap(&diff[i],&diff[j]);
+                swap(&request[i],&request[j]);
+            }
+        }
+    }
+
+
     printf("\n----------------\n");
     printf("SSTF :");
     printSeqNPerformance(request, numRequest);
@@ -87,7 +105,7 @@ void accessSCAN(int *request, int numRequest)
 	//write your logic here
     printf("\n----------------\n");
     printf("SCAN :");
-    printSeqNPerformance(newRequest, newCnt);
+    printSeqNPerformance(request, numRequest);
     printf("----------------\n");
     return;
 }
@@ -98,7 +116,7 @@ void accessCSCAN(int *request, int numRequest)
     //write your logic here
     printf("\n----------------\n");
     printf("CSCAN :");
-    printSeqNPerformance(newRequest, newCnt);
+    printSeqNPerformance(request, numRequest);
     printf("----------------\n");
     return;
 }
@@ -109,7 +127,7 @@ void accessLOOK(int *request, int numRequest)
     //write your logic here
     printf("\n----------------\n");
     printf("LOOK :");
-    printSeqNPerformance(newRequest, newCnt);
+    printSeqNPerformance(request, numRequest);
     printf("----------------\n");
     return;
 }
@@ -120,7 +138,7 @@ void accessCLOOK(int *request, int numRequest)
     //write your logic here
     printf("\n----------------\n");
     printf("CLOOK :");
-    printSeqNPerformance(newRequest,newCnt);
+    printSeqNPerformance(request, numRequest);
     printf("----------------\n");
     return;
 }
