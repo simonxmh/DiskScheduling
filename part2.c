@@ -142,9 +142,15 @@ void accessSCAN(int *request, int numRequest)
 //access the disk location in CSCAN
 void accessCSCAN(int *request, int numRequest)
 {
-    int *newRequest, i, j=0;
-    //initializing a new array to keep track of the differences
-    newRequest = malloc(numRequest * sizeof(int));
+    int *newRequest, newCnt = numRequest + 2, i, j=0;
+    //decrease the count if one of the requests actually has a 0 or a 199 track, otherwise
+    //assume it will be two more to account for the 199 transition to 0 begin
+    for(i=0;i<numRequest;i++){
+        if(request[i] == LOW || request[i] == HIGH){
+            newCnt--;
+        }
+    }
+    newRequest = malloc(newCnt * sizeof(int));
     
     qsort(request,numRequest,sizeof(int),cmpfunc);
 
@@ -167,7 +173,7 @@ void accessCSCAN(int *request, int numRequest)
     newRequest[j] = 0;
     j++;
     //go left to right for the smaller elements
-    for(i=0;i<indexOfStart;i++){
+    for(i=0;i<=indexOfStart;i++){
         newRequest[j] = request[i];
         j++;
     }
@@ -175,7 +181,7 @@ void accessCSCAN(int *request, int numRequest)
     
     printf("\n----------------\n");
     printf("CSCAN :");
-    printSeqNPerformance(newRequest, numRequest);
+    printSeqNPerformance(newRequest, newCnt);
     printf("----------------\n");
     return;
 }
