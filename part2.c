@@ -100,9 +100,15 @@ void accessSSTF(int *request, int numRequest)
 //access the disk location in SCAN
 void accessSCAN(int *request, int numRequest)
 {
-    int *newRequest, i, j=0;
-    //initializing a new array to keep track of the differences
-    newRequest = malloc(numRequest * sizeof(int));
+    int *newRequest, newCnt=numRequest+1, i, j=0;
+    //decrease the count if one of the requests actually has a 0 or a 199 track, otherwise
+    //assume it will be one more to account for the 0 transition
+    for(i=0;i<numRequest;i++){
+        if(request[i] == LOW || request[i] == HIGH){
+            newCnt--;
+        }
+    }
+    newRequest = malloc(newCnt * sizeof(int));
     
     qsort(request,numRequest,sizeof(int),cmpfunc);
 
@@ -128,7 +134,7 @@ void accessSCAN(int *request, int numRequest)
 
     printf("\n----------------\n");
     printf("SCAN :");
-    printSeqNPerformance(newRequest, numRequest);
+    printSeqNPerformance(newRequest, newCnt);
     printf("----------------\n");
     return;
 }
@@ -136,10 +142,40 @@ void accessSCAN(int *request, int numRequest)
 //access the disk location in CSCAN
 void accessCSCAN(int *request, int numRequest)
 {
-    //write your logic here
+    int *newRequest, i, j=0;
+    //initializing a new array to keep track of the differences
+    newRequest = malloc(numRequest * sizeof(int));
+    
+    qsort(request,numRequest,sizeof(int),cmpfunc);
+
+    int indexOfStart;
+    for(i=0;i<numRequest-1;i++){
+        if(request[i] < START && request[i+1] > START){
+            indexOfStart = i;
+        }
+    }
+
+    //go left to right for the larger elements
+    for(i=indexOfStart+1;i<numRequest;i++){
+        newRequest[j] = request[i];
+        j++;
+    }
+    //reaches the end
+    newRequest[j] = 199;
+    j++;
+    //start back at the beginning
+    newRequest[j] = 0;
+    j++;
+    //go left to right for the smaller elements
+    for(i=0;i<indexOfStart;i++){
+        newRequest[j] = request[i];
+        j++;
+    }
+    
+    
     printf("\n----------------\n");
     printf("CSCAN :");
-    printSeqNPerformance(request, numRequest);
+    printSeqNPerformance(newRequest, numRequest);
     printf("----------------\n");
     return;
 }
