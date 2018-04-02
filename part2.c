@@ -72,8 +72,8 @@ void accessFCFS(int *request, int numRequest)
 //access the disk location in SSTF
 void accessSSTF(int *request, int numRequest)
 {
-    //sort the request array and thus the sequence performance will go from smallest to largest
-    int *diff, newCnt, i, j;
+    int *diff, i, j;
+    //initializing a new array to keep track of the differences
     diff = malloc(numRequest * sizeof(int));
 
     for(i = 0;i<numRequest;i++){
@@ -81,15 +81,14 @@ void accessSSTF(int *request, int numRequest)
     }
 
     for(i = 0; i< numRequest; i++){
-        
         for(j = i+1; j<numRequest; j++){
+            //bubble this up
             if(diff[i] > diff[j]){
                 swap(&diff[i],&diff[j]);
                 swap(&request[i],&request[j]);
             }
         }
     }
-
 
     printf("\n----------------\n");
     printf("SSTF :");
@@ -101,11 +100,35 @@ void accessSSTF(int *request, int numRequest)
 //access the disk location in SCAN
 void accessSCAN(int *request, int numRequest)
 {
+    int *newRequest, i, j=0;
+    //initializing a new array to keep track of the differences
+    newRequest = malloc(numRequest * sizeof(int));
     
-	//write your logic here
+    qsort(request,numRequest,sizeof(int),cmpfunc);
+
+    int indexOfStart;
+    for(i=0;i<numRequest-1;i++){
+        if(request[i] < START && request[i+1] > START){
+            indexOfStart = i;
+        }
+    }
+    //go right to left for the smaller elements
+    for(i=indexOfStart;i>=0;i--){
+        newRequest[j] = request[i];
+        j++;
+    }
+    //reaches the end
+    newRequest[j] = 0;
+    j++;
+    //go left to right for the larger elements
+    for(i=indexOfStart+1;i<numRequest;i++){
+        newRequest[j] = request[i];
+        j++;
+    }
+
     printf("\n----------------\n");
     printf("SCAN :");
-    printSeqNPerformance(request, numRequest);
+    printSeqNPerformance(newRequest, numRequest);
     printf("----------------\n");
     return;
 }
