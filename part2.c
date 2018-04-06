@@ -191,8 +191,6 @@ void accessLOOK(int *request, int numRequest)
 {
     int *newRequest, newCnt=numRequest, i, j=0;
     //decrease the count if one of the requests actually has a 0 or a 199 track, otherwise
-    //assume it will be one more to account for the 0 transition
-
     newRequest = malloc(newCnt * sizeof(int));
     
     qsort(request,numRequest,sizeof(int),cmpfunc);
@@ -225,9 +223,9 @@ void accessLOOK(int *request, int numRequest)
 //access the disk location in CLOOK
 void accessCLOOK(int *request, int numRequest)
 {
-    int *newRequest, newCnt=numRequest+1, i, j=0;
+    int *newRequest, newCnt=numRequest+2, i, j=0;
     //decrease the count if one of the requests actually has a 0 or a 199 track, otherwise
-    //assume it will be one more to account for the 0 transition
+    //assume it will be two more to account for the 199 and 0 transition
 
     newRequest = malloc(newCnt * sizeof(int));
     
@@ -245,6 +243,10 @@ void accessCLOOK(int *request, int numRequest)
         newRequest[j] = request[i];
         j++;
     }
+    //reaches the end
+    newRequest[j] = 199;
+    j++;
+
     //start back at the beginning
     newRequest[j] = 0;
     j++;
